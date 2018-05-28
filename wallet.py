@@ -120,8 +120,6 @@ class MyIOTA:
 
         change_fund = self.get_fund_inputs(inputs) - input_fund
 
-        print '------', change_addr
-
         v = self.addr_dict[change_addr]
         change_value = (v[0], change_fund, self.NOT_USED)
 
@@ -208,20 +206,18 @@ class MyIOTA:
 
         return total_fund
 
-    def send_transfer(self, input_fund, inputs, outputs, change_addr):
+    def send_transfer(self, input_fund, inputs, outputs, change_addr, savetofile = True):
         self.debug('Sending {0} transactions, please wait...'.format(len(outputs)))
-
-        #self.update_wallet(input_fund, inputs, change_addr)
-        #return
 
         self.api.send_transfer(
                 inputs=inputs,
-                depth=3,
                 transfers=outputs,
+                depth=7,
                 change_address=change_addr,
                 min_weight_magnitude=self.min_weight_magnitude)
 
-        self.update_wallet(input_fund, inputs, change_addr)
+        if savetofile:
+            self.update_wallet(input_fund, inputs, change_addr)
 
     def get_trytes(self, hashl):
         return self.api.get_trytes(hashl)['trytes'][0]
@@ -232,7 +228,7 @@ class MyIOTA:
         return txn
 
     def get_transaction_fields(self, txn):
-        confirmed = str(txn.is_confirmed)
+        #confirmed = str(txn.is_confirmed)
         timestamp = str(txn.timestamp)
         address   = str(txn.address)
         value     = str(txn.value)
@@ -240,7 +236,7 @@ class MyIOTA:
         #message   = str(txn.message)
         tag       = str(txn.tag)
 
-        return (confirmed, timestamp, address, value, tag, message)
+        return (timestamp, address, value, tag, message)
 
     def get_info_transactions(self, transactions_hashes):
         txn_tuples = []
@@ -249,14 +245,22 @@ class MyIOTA:
             trytes = self.get_trytes([h])
             txn = self.get_transaction_from_trytes(trytes)
 
-            (_, _, addr_t, value_t, tag_t, msg_t) = self.get_transaction_fields(txn)
+            # Get confirmed flag
+            li_result = self.get_latest_inclusion([bytes(h)])
+            confirmed_t = li_result['states'][h]
 
-            txn_tuples.append((addr_t, value_t, tag_t, msg_t))
-            #txn_tuples.append((tag_t, msg_t))
+            (_, addr_t, value_t, tag_t, msg_t) = self.get_transaction_fields(txn)
+
+            txn_tuples.append((confirmed_t, addr_t, value_t, tag_t, msg_t))
 
         return txn_tuples
 
-    def get_inputs(self, fund, get_change_addr = True):
+
+    def get_addr_at_position(self, pos):
+        #TODO: verify
+        return self.addr_dict[pos]
+
+    def get_inputs(self, fund):
         # TODO: Zero fund
         fund_sum = 0
         addr_list = []
@@ -273,23 +277,21 @@ class MyIOTA:
                     self.debug('Found request: {0}. Found address {1} with fund {2}.'.format(fund, self.s_addr(addr), value))
                     addr_list.append(addr)
 
-        if get_change_addr:
-            for e in self.addr_dict.items():
-                addr, v = e
-                index, value, used = v
+        for e in self.addr_dict.items():
+            addr, v = e
+            index, value, used = v
 
-                if used == self.NOT_USED and addr not in addr_list:
-                    change_addr = addr
+            if used == self.NOT_USED and addr not in addr_list:
+                change_addr = addr
 
-                    self.debug('Using {0} as change addr.'.format(self.s_addr(addr)))
-                return (addr_list, change_addr)
+                self.debug('Using {0} as change addr.'.format(self.s_addr(addr)))
+                break
+        return (addr_list, change_addr)
 
-        else:
-            # TODO
-            self.iota_assert(True, 'No change addr available.')
+        #else:
+        #    # TODO
+        #    self.iota_assert(True, 'No change addr available.')
     
-        return addr_list
-
     def iota_assert(self, condition, msg):
         if not condition:
             print 'Error: ', msg

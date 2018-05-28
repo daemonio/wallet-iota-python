@@ -1,9 +1,9 @@
 #!/usr/bin/env python2.7
 
+# Iissue 0-value transections JUST to approve others transaction.
+
 from wallet import MyIOTA
 import sys
-
-import MAM
 
 # wallet.py
 
@@ -14,7 +14,7 @@ def send(iota, transfer_value, dest_addr):
     iota.send_transfer(transfer_value, inputs, [output1], change_addr)
 
 # Set your SEED.
-SEED = 'G9OJZJEJFHFDRET9VBMSJEQEJSMPJHTSEZHYSXIFASRQFHDWMQHVGBSHHKIVXBTVDOLBYZCQJMFYEWTEB'
+SEED   = 'WSHQRZICNFQUQPAPYWKFPWKTWWBPQNMTDNBYSGFZURGBWONDQEBPLNUXJVQTPYNFJKKTFATIVJTBSAWUX'
 
 # Let's create our connection.
 iota = MyIOTA('http://localhost:14265', SEED)
@@ -28,15 +28,14 @@ if iota.is_empty_wallet():
 
 print 'Your total fund is: ', iota.get_total_fund()
 
-# value
 transfer_value = 0
 
-# source addr
-source_addr = iota.get_addr_at_position(0)
+count = 0
+while True:
+    for addr in open('dest_addr_test_.log', 'r'):
+        addr = addr.rstrip('\n')
 
-# dest addr
-addr = 'UXIKPLHDHSNTTVTMGP9RNK9CVRHXRNFFZVTPGPHVTZMOTT9TMINEVNZHVMRJEEWCNSZYNNNITFKSSJUOCTND9VVDQD'
-dest_addr = iota.Address(addr)
+        dest_addr = iota.Address(addr)
 
-print 'Sending {0} too {1}...'.format(transfer_value, iota.s_addr(addr))
-send(iota, transfer_value, dest_addr)
+        print '[{0}] Sending {1} too {2}...'.format(count, transfer_value, iota.s_addr(addr))
+        send(iota, transfer_value, dest_addr)
