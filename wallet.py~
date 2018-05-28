@@ -216,7 +216,7 @@ class MyIOTA:
 
         self.api.send_transfer(
                 inputs=inputs,
-                depth=3,
+                depth=7,
                 transfers=outputs,
                 change_address=change_addr,
                 min_weight_magnitude=self.min_weight_magnitude)
