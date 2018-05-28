@@ -1,6 +1,8 @@
 # wallet-iota-python
 DONT USE THIS ON THE MAIN NET. It is still in the developing stage...
 
+Test the wallet the docker testnet version using: https://github.com/daemonio/docker-iota-testnet
+
 # Example of use
 
 To SEND
