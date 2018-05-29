@@ -8,7 +8,7 @@ import sys
 # wallet.py
 
 def send(iota, transfer_value, dest_addr):
-    inputs, change_addr = iota.get_inputs(transfer_value, get_change_addr = True)
+    inputs, change_addr = iota.get_inputs(transfer_value)
     output1 = iota.prepare_transfer(transfer_value, dest_addr, tag = 'TEST', msg = 'HELLO')
 
     iota.send_transfer(transfer_value, inputs, [output1], change_addr)

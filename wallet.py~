@@ -5,6 +5,7 @@ import sys
 
 import hashlib
 import os.path
+import random
 
 class MyIOTA:
     def __init__(self, node, seed):
@@ -169,6 +170,8 @@ class MyIOTA:
 
         msg = TryteString.from_string(msg)
 
+        print type(dest_addr)
+
         txn = ProposedTransaction(address=Address(dest_addr),
                 message=msg,
                 tag=Tag(tag),
@@ -208,6 +211,10 @@ class MyIOTA:
 
     def send_transfer(self, input_fund, inputs, outputs, change_addr, savetofile = True):
         self.debug('Sending {0} transactions, please wait...'.format(len(outputs)))
+
+        print inputs
+        print outputs
+        print change_addr
 
         self.api.send_transfer(
                 inputs=inputs,
@@ -255,11 +262,26 @@ class MyIOTA:
 
         return txn_tuples
 
+    def get_any_addr(self):
+        #TODO: verify
+        #return self.addr_dict.keys()[0]
+        k = self.addr_dict.keys()
+        i = random.randint(0, len(k)-1)
+
+        return k[i]
+
     def get_inputs(self, fund):
         # TODO: Zero fund
         fund_sum = 0
         addr_list = []
         change_addr = None
+
+        # Zero fund transactions. We return any addr and any change_addr
+        if fund == 0:
+            addr_list.append(self.get_any_addr())
+            change_addr = self.get_any_addr()
+
+            return (addr_list, change_addr)
 
         for e in self.addr_dict.items():
             addr, v = e

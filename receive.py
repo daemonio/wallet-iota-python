@@ -5,12 +5,13 @@ from wallet import MyIOTA
 import MAM
 
 # wallet.py
+# MAM.py
 
 # SEED da send.py
-SEED   = 'WSHQRZICNFQUQPAPYWKFPWKTWWBPQNMTDNBYSGFZURGBWONDQEBPLNUXJVQTPYNFJKKTFATIVJTBSAWUX'
+#SEED   = 'WSHQRZICNFQUQPAPYWKFPWKTWWBPQNMTDNBYSGFZURGBWONDQEBPLNUXJVQTPYNFJKKTFATIVJTBSAWUX'
 
 # Set your SEED.
-#SEED   = 'WXBTI9EVKNBEMBWMQUVOKALPQZGURKXQUUOZMGLIPIPU99RCYSPPIOQN9SJSPTDZVIIXKPRJQIVQARINL'
+SEED   = 'WXBTI9EVKNBEMBWMQUVOKALPQZGURKXQUUOZMGLIPIPU99RCYSPPIOQN9SJSPTDZVIIXKPRJQIVQARINL'
 
 # Let's create our connection.
 iota = MyIOTA('http://localhost:14265', SEED)
@@ -26,8 +27,8 @@ print 'Your total fund is: ', iota.get_total_fund()
 txn_list = iota.find_transactions()
 
 for txn in iota.get_info_transactions(txn_list):
-    confirmed_t, addr_t, value_t, _, _ = txn
+    confirmed_t, addr_t, value_t, tag_t, msg_t = txn
 
-    print '------', confirmed_t, addr_t, value_t
+    #print '------', confirmed_t, addr_t, value_t
 
-
+    print msg_t

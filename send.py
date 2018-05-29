@@ -3,15 +3,23 @@
 from wallet import MyIOTA
 import sys
 
-import MAM
+from MAM import MAM
 
 # wallet.py
+# MAM.py
 
-def send(iota, transfer_value, dest_addr):
+def send_file(iota, filename, source_addr, dest_addr):
+    mam = MAM(iota)
+
+    transfer_value = 0
+
+    # These values really don't matter when transfer value = 0
     inputs, change_addr = iota.get_inputs(transfer_value)
-    output1 = iota.prepare_transfer(transfer_value, dest_addr, tag = 'TEST', msg = 'HELLO')
 
-    iota.send_transfer(transfer_value, inputs, [output1], change_addr)
+    #output1 = iota.prepare_transfer(transfer_value, dest_addr, tag = 'TEST', msg = 'HELLO')
+    outputs = mam.get_transactions_as_file_buffer(filename, 100, source_addr, dest_addr)
+
+    iota.send_transfer(transfer_value, inputs, outputs, change_addr)
 
 # Set your SEED.
 SEED = 'G9OJZJEJFHFDRET9VBMSJEQEJSMPJHTSEZHYSXIFASRQFHDWMQHVGBSHHKIVXBTVDOLBYZCQJMFYEWTEB'
@@ -28,15 +36,12 @@ if iota.is_empty_wallet():
 
 print 'Your total fund is: ', iota.get_total_fund()
 
-# value
-transfer_value = 0
-
-# source addr
-source_addr = iota.get_addr_at_position(0)
+# any addr for source addr
+source_addr = iota.get_any_addr()
 
 # dest addr
 addr = 'UXIKPLHDHSNTTVTMGP9RNK9CVRHXRNFFZVTPGPHVTZMOTT9TMINEVNZHVMRJEEWCNSZYNNNITFKSSJUOCTND9VVDQD'
 dest_addr = iota.Address(addr)
 
-print 'Sending {0} too {1}...'.format(transfer_value, iota.s_addr(addr))
-send(iota, transfer_value, dest_addr)
+print 'Sending {0} to {1}...'.format(0, iota.s_addr(addr))
+send_file(iota, '/etc/passwd', source_addr, dest_addr)
