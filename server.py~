@@ -6,6 +6,7 @@ import MAM
 from iota import TryteString
 
 import sys
+import time
 
 # wallet.py
 # MAM.py
@@ -16,7 +17,7 @@ class TaskList:
         pass
 
     def _get_info(self, tag):
-        return tag.split('|')
+        return map(int, tag.split('|'))
 
     def _save_task_to_file(self, id_t):
         r = open(str(id_t) + '.py', 'w')
@@ -33,10 +34,14 @@ class TaskList:
         r.close()
 
     def is_new_task(self, id_t):
+        print self.task_dict.keys()
         return id_t not in self.task_dict.keys()
 
-    def is_new_index(self, id_t, index):
-        return len(self.task_dict[id_t][index]) == 0
+    def check_task(self, tag):
+        # TODO: chegar index tambem
+        id_t, index_t, total_t = self._get_info(tag)
+
+        return self.is_new_task(id_t)
 
     def add_task(self, id_str, line_code):
         id_t, index_t, total_t = self._get_info(id_str)
@@ -50,15 +55,14 @@ class TaskList:
 
             self.task_dict[id_t] = body
         else:
-            print 'index: ', index_t
-            print 'len do id: ', id_t, ' : ', len(self.task_dict[id_t])
+            #print 'index: ', index_t
+            #print 'len do id: ', id_t, ' : ', len(self.task_dict[id_t])
             self.task_dict[id_t][index_t] = line_code
 
     def list_tasks(self):
         for id_t in self.task_dict:
             print 'id_t: {0} | msg length: {1}'.format(id_t, len(self.task_dict[id_t]))
-            print self.task_dict[id_t]
-            self._save_task_to_file(id_t)
+            #self._save_task_to_file(id_t)
 
 class Client:
     def __init__(self, addr):
@@ -110,13 +114,14 @@ def verify_tangle(iota, tasks):
     for txn in iota.get_info_transactions(txn_list):
         confirmed_t, addr_t, value_t, tag_t, msg_t = txn
         t = TryteString(tag_t)
-        m = TryteString(msg_t)
-
         tag = t.decode()
-        msg = m.decode()
 
-        tasks.add_task(tag, msg)
-        pass
+        if tasks.check_task(tag):
+            m = TryteString(msg_t)
+            msg = m.decode()
+            tasks.add_task(tag, msg)
+        else:
+            print 'No new tasks...'
 
     tasks.list_tasks()
 
@@ -148,4 +153,8 @@ print iota.get_any_addr()
 print 'Your total fund is: ', iota.get_total_fund()
 
 tasks = TaskList()
-verify_tangle(iota, tasks)
+
+while True:
+    verify_tangle(iota, tasks)
+
+    time.sleep(5)
