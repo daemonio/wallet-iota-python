@@ -63,7 +63,6 @@ class MAM:
                         buf[currentIndex] += l2
 
                         l = l[bufsize:]
-                        print l
                 else:
                     # when currentIndex is full. Just create a new
                     # position in the buf.
@@ -76,7 +75,7 @@ class MAM:
 
     def get_transactions_as_file_buffer(self, filename, bufsize, ID_msg, source_addr, dest_addr):
         txn_list = []
-        index = 1
+        index = 0
         value = 0
 
         header = ['{0}'.format(source_addr)]

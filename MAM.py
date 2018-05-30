@@ -63,7 +63,6 @@ class MAM:
                         buf[currentIndex] += l2
 
                         l = l[bufsize:]
-                        print l
                 else:
                     # when currentIndex is full. Just create a new
                     # position in the buf.
