@@ -2,6 +2,7 @@
 
 from wallet import MyIOTA
 import sys
+import random
 
 from MAM import MAM
 
@@ -16,8 +17,10 @@ def send_file(iota, filename, source_addr, dest_addr):
     # These values really don't matter when transfer value = 0
     inputs, change_addr = iota.get_inputs(transfer_value)
 
+    ID_msg = random.randint(0, 1000)
+
     #output1 = iota.prepare_transfer(transfer_value, dest_addr, tag = 'TEST', msg = 'HELLO')
-    outputs = mam.get_transactions_as_file_buffer(filename, 500, source_addr, dest_addr)
+    outputs = mam.get_transactions_as_file_buffer(filename, 500, ID_msg, source_addr, dest_addr)
 
     iota.send_transfer(transfer_value, inputs, outputs, change_addr)
 
@@ -44,4 +47,4 @@ addr = 'UXIKPLHDHSNTTVTMGP9RNK9CVRHXRNFFZVTPGPHVTZMOTT9TMINEVNZHVMRJEEWCNSZYNNNI
 dest_addr = iota.Address(addr)
 
 print 'Sending {0} to {1}...'.format(0, iota.s_addr(addr))
-send_file(iota, '/etc/passwd', source_addr, dest_addr)
+send_file(iota, '/etc/group', source_addr, dest_addr)

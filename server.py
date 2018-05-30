@@ -10,26 +10,60 @@ import sys
 # wallet.py
 # MAM.py
 
-class Task:
-    def __init__(self, filename):
-        self.filefd = open(filename, 'r')
-        self.start_time = 0
-        self.end_time = 0
+class TaskList:
+    def __init__(self):
+        self.task_dict = {}
         pass
 
-    def _execute(self):
-        pass
+    def _get_info(self, tag):
+        return tag.split('|')
 
-    def execute(self):
-        self.start_time = 0
-        self._execute()
-        self.end_time = 0
+    def _save_task_to_file(self, id_t):
+        r = open(str(id_t) + '.py', 'w')
+
+        first = True
+
+        for l in self.task_dict[id_t]:
+            if first:
+                first = False
+                continue
+
+            r.write(l)
+
+        r.close()
+
+    def is_new_task(self, id_t):
+        return id_t not in self.task_dict.keys()
+
+    def is_new_index(self, id_t, index):
+        return len(self.task_dict[id_t][index]) == 0
+
+    def add_task(self, id_str, line_code):
+        id_t, index_t, total_t = self._get_info(id_str)
+
+        id_t, index_t, total_t = int(id_t), int(index_t), int(total_t)
+
+        if self.is_new_task(id_t):
+            body = ['' for i in range(total_t)]
+
+            body[index_t] = line_code
+
+            self.task_dict[id_t] = body
+        else:
+            #print 'index: ', index_t
+            #print 'len do id: ', id_t, ' : ', len(self.task_dict[id_t])
+            self.task_dict[id_t][index_t] = line_code
+
+    def list_tasks(self):
+        for id_t in self.task_dict:
+            print 'id_t: {0} | msg length: {1}'.format(id_t, len(self.task_dict[id_t]))
+            #self._save_task_to_file(id_t)
 
 class Client:
     def __init__(self, addr):
         self.time = 0
         self.addr = addr
-        self.task_id = None
+        self.task = None
 
     def get_addr(self):
         return self.addr
@@ -67,14 +101,30 @@ class HandleClients:
 
         return True
 
-def verify_tangle(iota):
+def verify_tangle(iota, tasks):
     txn_list = iota.find_transactions()
+
+    txn_all_msg = []
 
     for txn in iota.get_info_transactions(txn_list):
         confirmed_t, addr_t, value_t, tag_t, msg_t = txn
         t = TryteString(tag_t)
-        print t.decode()
+        m = TryteString(msg_t)
+
+        tag = t.decode()
+        msg = m.decode()
+
+        tasks.add_task(tag, msg)
         pass
+
+    tasks.list_tasks()
+
+def is_task_exist(task_list, task):
+    for t in task_list:
+        if t.get_id() == task.get_id():
+            return True
+
+    return False
 
 #
 # This "server" can work without setting a SEED but as we're testing the wallet API,
@@ -96,20 +146,5 @@ print iota.get_any_addr()
 
 print 'Your total fund is: ', iota.get_total_fund()
 
-verify_tangle(iota)
-
-sys.exit()
-
-# Infinite loop. Reading the tangle and creating tasks.
-while True:
-    pass
-
-# TO RECEIVE
-txn_list = iota.find_transactions()
-
-for txn in iota.get_info_transactions(txn_list):
-    confirmed_t, addr_t, value_t, tag_t, msg_t = txn
-
-    #print '------', confirmed_t, addr_t, value_t
-
-    print msg_t
+tasks = TaskList()
+verify_tangle(iota, tasks)

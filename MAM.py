@@ -74,12 +74,12 @@ class MAM:
 
         return buf
 
-    def get_transactions_as_file_buffer(self, filename, bufsize, source_addr, dest_addr):
+    def get_transactions_as_file_buffer(self, filename, bufsize, ID_msg, source_addr, dest_addr):
         txn_list = []
         index = 0
         value = 0
 
-        header = ['{0}0'.format(source_addr)]
+        header = ['{0}'.format(source_addr)]
         body   = self.get_buffer_from_file(filename, bufsize)
 
         buffer_msg = []
@@ -89,9 +89,7 @@ class MAM:
         l = len(buffer_msg)
 
         for msg in buffer_msg:
-            ID = random.randint(0, 1000)
-
-            TAG = '{0}|{1}|{2}'.format(ID, index, l)
+            TAG = '{0}|{1}|{2}'.format(ID_msg, index, l)
             TAG = TryteString.from_string(TAG)
 
             txn = self.iota.prepare_transfer(0, dest_addr, TAG, msg)
