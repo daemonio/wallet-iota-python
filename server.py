@@ -60,6 +60,9 @@ class Task:
     def get_content(self):
         return self.body
 
+    def execute(self, filename):
+        pass
+
 class TaskList:
     def __init__(self):
         self.task_list = []
@@ -145,6 +148,11 @@ def verify_tangle(iota, tasks):
 
     for txn in iota.get_info_transactions(txn_list):
         confirmed_t, addr_t, value_t, tag_t, msg_t = txn
+
+        # TODO
+        if value_t > 0:
+            continue
+
         t = TryteString(tag_t)
         tag = t.decode()
 

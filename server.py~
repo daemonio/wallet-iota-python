@@ -60,6 +60,9 @@ class Task:
     def get_content(self):
         return self.body
 
+    def execute(self, filename):
+        pass
+
 class TaskList:
     def __init__(self):
         self.task_list = []
