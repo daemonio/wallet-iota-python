@@ -70,9 +70,9 @@ class MAM:
                     currentIndex += 1
                     buf.append('')
 
-          r.close()
+        r.close()
 
-          return buf
+        return buf
 
     def get_transactions_as_file_buffer(self, filename, bufsize, source_addr, dest_addr):
         txn_list = []

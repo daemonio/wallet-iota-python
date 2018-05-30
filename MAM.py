@@ -97,6 +97,8 @@ class MAM:
             txn = self.iota.prepare_transfer(0, dest_addr, TAG, msg)
             txn_list.append(txn)
 
+            index += 1
+
         return txn_list
 
     def save_transactions_buffer_as_file(self, txn_list, filename):

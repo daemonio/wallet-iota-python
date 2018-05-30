@@ -17,7 +17,7 @@ def send_file(iota, filename, source_addr, dest_addr):
     inputs, change_addr = iota.get_inputs(transfer_value)
 
     #output1 = iota.prepare_transfer(transfer_value, dest_addr, tag = 'TEST', msg = 'HELLO')
-    outputs = mam.get_transactions_as_file_buffer(filename, 100, source_addr, dest_addr)
+    outputs = mam.get_transactions_as_file_buffer(filename, 500, source_addr, dest_addr)
 
     iota.send_transfer(transfer_value, inputs, outputs, change_addr)
 
