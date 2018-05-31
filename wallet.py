@@ -20,7 +20,7 @@ class MyIOTA:
 
         self.addr_dict = {}
 
-        self.min_weight_magnitude = 9
+        self.min_weight_magnitude = 14
 
         self.api = Iota(self.node, self.seed)
 
