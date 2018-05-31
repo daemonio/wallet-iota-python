@@ -29,8 +29,11 @@ SEED = 'G9OJZJEJFHFDRET9VBMSJEQEJSMPJHTSEZHYSXIFASRQFHDWMQHVGBSHHKIVXBTVDOLBYZCQ
 
 # Let's create our connection.
 iota = MyIOTA('http://localhost:14265', SEED)
-
 iota.enable_debug()
+
+print iota.get_node_info()
+
+sys.exit()
 
 iota.init_wallet()
 
