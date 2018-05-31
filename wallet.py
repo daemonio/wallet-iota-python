@@ -20,7 +20,7 @@ class MyIOTA:
 
         self.addr_dict = {}
 
-        self.min_weight_magnitude = 14
+        self.min_weight_magnitude = 9
 
         self.api = Iota(self.node, self.seed)
 
@@ -138,7 +138,7 @@ class MyIOTA:
             print '[+] Debug: ', msg
 
     def get_node_info(self):
-        self.api.get_node_info()
+        return self.api.get_node_info()
 
     def make_addr_list(self, start_index, n):
         self.iota_assert(start_index >= 0 and n > 0, 'must be positive numbers. N should be at least 1.')
