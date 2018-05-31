@@ -2,11 +2,10 @@
 
 from wallet import MyIOTA
 import MAM
-
 from iota import TryteString
-
 import sys
 import time
+import runpy
 
 # wallet.py
 # MAM.py
@@ -18,8 +17,21 @@ class Task:
         self.body = ['' for i in range(self.total_t)]
         self.mask = [False for i in range(self.total_t)]
         self.addr = ''
+        self.filename = ''
 
+        # addr is in the first position
         self.mask[0] = ignore_addr
+
+    def _save_to_file(self):
+        self.filename = 'task_'+self.addr[:10]+'.tsk'
+
+        filefd = open(self.filename, 'w')
+
+        for c in self.get_content():
+            filefd.write(c)
+
+        filefd.close()
+        pass
 
     def get_id(self):
         return self.id_t
@@ -61,6 +73,8 @@ class Task:
         return self.body
 
     def execute(self, filename):
+        if self.is_content_left():
+            return False
         pass
 
 class TaskList:
@@ -146,12 +160,9 @@ def verify_tangle(iota, tasks):
 
     txn_all_msg = []
 
+    # TODO: check value
     for txn in iota.get_info_transactions(txn_list):
         confirmed_t, addr_t, value_t, tag_t, msg_t = txn
-
-        # TODO
-        if value_t > 0:
-            continue
 
         t = TryteString(tag_t)
         tag = t.decode()
@@ -198,9 +209,10 @@ tasks = TaskList()
 i = 0
 while i < 5:
     verify_tangle(iota, tasks)
-
-    time.sleep(5)
-
+    time.sleep(2)
     i += 1
 
 tasks.show()
+
+for t in tasks.task_list:
+    t._save_to_file()
