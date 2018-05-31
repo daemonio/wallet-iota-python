@@ -6,6 +6,7 @@ from iota import TryteString
 import sys
 import time
 import subprocess
+import os
 #file_globals = runpy.run_path("file.py")
 
 # wallet.py
@@ -187,7 +188,7 @@ def verify_tangle(iota, tasks):
         else:
             print 'No new tasks...'
 
-    tasks.list_tasks()
+    #tasks.list_tasks()
 
 def is_task_exist(task_list, task):
     for t in task_list:

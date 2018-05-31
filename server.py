@@ -188,7 +188,7 @@ def verify_tangle(iota, tasks):
         else:
             print 'No new tasks...'
 
-    tasks.list_tasks()
+    #tasks.list_tasks()
 
 def is_task_exist(task_list, task):
     for t in task_list:
@@ -222,6 +222,10 @@ tasks = TaskList()
 i = 0
 while i < 5:
     verify_tangle(iota, tasks)
+
+    # Execute new tasks
+    tasks.execute()
+
     time.sleep(2)
     i += 1
 
