@@ -5,7 +5,9 @@ import MAM
 from iota import TryteString
 import sys
 import time
-import runpy
+import subprocess
+import os
+#file_globals = runpy.run_path("file.py")
 
 # wallet.py
 # MAM.py
@@ -31,7 +33,18 @@ class Task:
             filefd.write(c)
 
         filefd.close()
+
+        os.chmod(self.filename, 0765)
         pass
+
+    def _execute(self):
+        p = subprocess.Popen('./'+self.filename, stdout=subprocess.PIPE, shell=True)
+        print '-----------', self.filename
+        (output, err) = p.communicate()
+        p_status = p.wait()
+
+        print "Command output : ", output
+        print "Command exit status/return code : ", p_status
 
     def get_id(self):
         return self.id_t
@@ -216,3 +229,4 @@ tasks.show()
 
 for t in tasks.task_list:
     t._save_to_file()
+    t._execute()
