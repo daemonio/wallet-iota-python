@@ -1,0 +1,42 @@
+#!/usr/bin/env python 
+
+# Baby Step Giant Step DLP problem y = a**x mod n
+
+from math import floor
+from math import sqrt
+
+
+# Example 70 = 2**x mod 131
+# Use SAGE for complex operations
+
+y = 70
+a = 23456
+n = 13131475
+
+s = int(floor(sqrt(n)))
+
+A = []
+B = []
+
+for r in range(0,s):
+    value = y*(a^r) % n
+    A.append(value)
+
+for t in range(1,s+1):
+    value = a^(t*s) % n
+    B.append(value)
+
+#print A
+#print B
+
+x1,x2 =0,0
+ 
+for r in A:
+    for t in B:
+        if r == t:
+            x1 = A.index(r)            
+            x2 = B.index(t)
+            #print x1,x2
+            break
+            
+print 'the value of x is ', ((x2+1)*s - x1) % n # Answer

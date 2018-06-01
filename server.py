@@ -7,6 +7,9 @@ import sys
 import time
 import subprocess
 import os
+
+from threading import Thread
+
 #file_globals = runpy.run_path("file.py")
 
 # wallet.py
@@ -20,6 +23,13 @@ class Task:
         self.mask = [False for i in range(self.total_t)]
         self.addr = ''
         self.filename = ''
+
+        # Status flags
+        self.saved_file = False
+        self.executed = None
+
+        # Output of the task
+        self.output = []
 
         # addr is in the first position
         self.mask[0] = ignore_addr
@@ -37,14 +47,6 @@ class Task:
         os.chmod(self.filename, 0765)
         pass
 
-    def _execute(self):
-        p = subprocess.Popen('./'+self.filename, stdout=subprocess.PIPE, shell=True)
-        print '-----------', self.filename
-        (output, err) = p.communicate()
-        p_status = p.wait()
-
-        print "Command output : ", output
-        print "Command exit status/return code : ", p_status
 
     def get_id(self):
         return self.id_t
@@ -66,6 +68,18 @@ class Task:
     def set_addr(self, addr):
         self.addr = addr
 
+    def is_executed(self):
+        return self.executed == True
+
+    def is_saved_file(self):
+        return self.saved_file
+
+    def set_executed(self, f = True):
+        self.executed = f
+
+    def set_saved_file(self):
+        self.saved_file = True
+
     def set_msg_at_index(self, index_t, msg_t, overwrite = False):
         # if not to overwrite.. leave.
         if self.mask[index_t] and (not overwrite):
@@ -85,10 +99,36 @@ class Task:
     def get_content(self):
         return self.body
 
-    def execute(self, filename):
+    def _execute(self, args):
+        p = subprocess.Popen('./'+self.filename, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+
+        # TODO: redirect to file
+        
+        #print "Command output : ", output
+        #print "Command exit status/return code : ", p_status
+
+        self.set_executed()
+        self.output = output
+
+    def execute(self):
         if self.is_content_left():
             return False
-        pass
+
+        if self.is_executed():
+            return False
+
+        if not self.is_saved_file():
+            self._save_to_file()
+            self.set_saved_file()
+
+        # None (not executed) -> False (initiated) -> True (finalized)
+        self.set_executed(False)
+
+        thread = Thread(target = self._execute, args = [None])
+        thread.start()
+        thread.join()
 
 class TaskList:
     def __init__(self):
@@ -108,11 +148,15 @@ class TaskList:
         for task in self.task_list:
             id_t = task.get_id()
             print 'Task: ', id_t
-            print 'Content:'
-            print 'Addr: |', task.get_addr()[:10], '|'
-            for c in task.get_content():
-                print c
-            print '-------------------------------'
+            print 'Executed: ', task.is_executed()
+
+            if task.is_executed():
+                print task.output
+            #print 'Content:'
+            #print 'Addr: |', task.get_addr()[:10], '|'
+            #for c in task.get_content():
+            #    print c
+            #print '-------------------------------'
 
     def is_new_task(self, task):
         for t in self.task_list:
@@ -159,6 +203,10 @@ class TaskList:
                 task.set_addr(msg)
             else:
                 task.set_msg_at_index(index_t, msg)
+
+    def execute_tasks(self):
+        for task in self.task_list:
+            task.execute()
 
     def list_tasks(self):
         # There is a header.
@@ -219,18 +267,12 @@ print 'Your total fund is: ', iota.get_total_fund()
 
 tasks = TaskList()
 
-i = 0
-while i < 5:
+while True:
     verify_tangle(iota, tasks)
 
     # Execute new tasks
-    tasks.execute()
+    tasks.execute_tasks()
 
-    time.sleep(2)
-    i += 1
+    time.sleep(10)
 
-tasks.show()
-
-for t in tasks.task_list:
-    t._save_to_file()
-    t._execute()
+    tasks.show()

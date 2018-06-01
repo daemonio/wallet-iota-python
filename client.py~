@@ -26,6 +26,9 @@ def send_file(iota, filename, source_addr, dest_addr):
 
     return task_id
 
+def send_iota(iota, transfer_value, dest_addr):
+    pass
+
 # Set your SEED.
 SEED = 'G9OJZJEJFHFDRET9VBMSJEQEJSMPJHTSEZHYSXIFASRQFHDWMQHVGBSHHKIVXBTVDOLBYZCQJMFYEWTEB'
 
@@ -49,10 +52,6 @@ print 'Your total fund is: ', iota.get_total_fund()
 
 # any addr for source addr
 source_addr = iota.get_any_addr()
-
-# dest addr
-#addr = 'UXIKPLHDHSNTTVTMGP9RNK9CVRHXRNFFZVTPGPHVTZMOTT9TMINEVNZHVMRJEEWCNSZYNNNITFKSSJUOCTND9VVDQD'
-#dest_addr = iota.Address(addr)
 
 print 'Sending {0} to {1}...'.format(0, iota.s_addr(addr))
 task_id = send_file(iota, './test.py', source_addr, dest_addr)

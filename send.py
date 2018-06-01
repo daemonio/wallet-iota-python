@@ -33,7 +33,7 @@ iota.enable_debug()
 
 print iota.get_node_info()
 
-sys.exit()
+#sys.exit()
 
 iota.init_wallet()
 
@@ -50,4 +50,4 @@ addr = 'UXIKPLHDHSNTTVTMGP9RNK9CVRHXRNFFZVTPGPHVTZMOTT9TMINEVNZHVMRJEEWCNSZYNNNI
 dest_addr = iota.Address(addr)
 
 print 'Sending {0} to {1}...'.format(0, iota.s_addr(addr))
-send_file(iota, './test.py', source_addr, dest_addr)
+send_file(iota, './test2.py', source_addr, dest_addr)

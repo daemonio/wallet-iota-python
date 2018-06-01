@@ -26,6 +26,9 @@ def send_file(iota, filename, source_addr, dest_addr):
 
     return task_id
 
+def send_iota(iota, transfer_value, dest_addr):
+    pass
+
 # Set your SEED.
 SEED = 'G9OJZJEJFHFDRET9VBMSJEQEJSMPJHTSEZHYSXIFASRQFHDWMQHVGBSHHKIVXBTVDOLBYZCQJMFYEWTEB'
 

@@ -12,5 +12,4 @@ def primes(n):
         primfac.append(n)
     return primfac
 
-print 'Preparing...'
 print primes(12345678987654321)
