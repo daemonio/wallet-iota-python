@@ -31,23 +31,35 @@ SEED = 'G9OJZJEJFHFDRET9VBMSJEQEJSMPJHTSEZHYSXIFASRQFHDWMQHVGBSHHKIVXBTVDOLBYZCQ
 iota = MyIOTA('http://localhost:14265', SEED)
 iota.enable_debug()
 
-print iota.get_node_info()
+# Test of node is up.
+#print iota.get_node_info()
 
-#sys.exit()
-
+# Create wallet file.
 iota.init_wallet()
 
+# Get new addressess.
 if iota.is_empty_wallet():
     iota.make_addr_list(start_index = 0, n = 10)
 
 print 'Your total fund is: ', iota.get_total_fund()
 
 # any addr for source addr
-source_addr = iota.get_any_addr()
+source_addr = iota.get_any_valid_addr()
 
 # dest addr
 addr = 'UXIKPLHDHSNTTVTMGP9RNK9CVRHXRNFFZVTPGPHVTZMOTT9TMINEVNZHVMRJEEWCNSZYNNNITFKSSJUOCTND9VVDQD'
 dest_addr = iota.Address(addr)
 
-print 'Sending {0} to {1}...'.format(0, iota.s_addr(addr))
-send_file(iota, './test2.py', source_addr, dest_addr)
+# value to transfer
+transfer_value = 100
+
+# inputs & change address (entrada e troco)
+inputs, change_addr = iota.get_inputs(transfer_value)
+
+# output (the transaction where the IOTA is going to)
+output1 = iota.prepare_transfer(transfer_value, dest_addr, 'TAG', 'WHATEVER')
+
+iota.debug('Sending transaction.. please wait.')
+
+# Send our transaction
+iota.send_transfer(transfer_value, inputs, [output1], change_addr)

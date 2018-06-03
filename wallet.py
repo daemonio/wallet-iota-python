@@ -153,7 +153,6 @@ class MyIOTA:
             # TODO: Why always False
             self.addr_dict[addr] = (i, value, False)
 
-
         self.write_updates()
 
     def get_addr_balance(self, addr):
@@ -207,7 +206,27 @@ class MyIOTA:
 
         return total_fund
 
+    def get_number_of_address(self):
+        return len(self.addr_dict)
+
+    def is_all_addr_used(self):
+        for addr in self.addr_dict:
+            for e in self.addr_dict.items():
+                addr, v = e
+                index, value, used = v
+
+                if used == False:
+                    return True
+
+    def get_more_addr(self, n = 10):
+        start_index = self.get_number_of_address()
+
+        self.debug('Getting more addresses...please wait...')
+
+        self.make_addr_list(start_index, n)
+
     def send_transfer(self, input_fund, inputs, outputs, change_addr, savetofile = True):
+        # TODO: How to send MANY transactions.
         self.debug('Sending {0} transactions, please wait...'.format(len(outputs)))
 
         self.api.send_transfer(
@@ -216,6 +235,11 @@ class MyIOTA:
                 depth=7,
                 change_address=change_addr,
                 min_weight_magnitude=self.min_weight_magnitude)
+
+        self.debug('Sent.')
+        if self.is_all_addr_used():
+            # We do an update to wallet file here.
+            self.get_more_addr(n = 10)
 
         if savetofile:
             self.update_wallet(input_fund, inputs, change_addr)
@@ -256,13 +280,18 @@ class MyIOTA:
 
         return txn_tuples
 
-    def get_any_addr(self):
+    def get_any_valid_addr(self):
         #TODO: verify
         #return self.addr_dict.keys()[0]
-        k = self.addr_dict.keys()
-        i = random.randint(0, len(k)-1)
 
-        return k[i]
+        for e in self.addr_dict.items():
+            addr, v = e
+            index, value, used = v
+
+            if not used:
+                return addr
+
+        return None
 
     def get_inputs(self, fund):
         # TODO: Zero fund
