@@ -11,9 +11,7 @@ import MAM
 SEED   = 'WXBTI9EVKNBEMBWMQUVOKALPQZGURKXQUUOZMGLIPIPU99RCYSPPIOQN9SJSPTDZVIIXKPRJQIVQARINL'
 
 # Let's create our connection.
-#iota = MyIOTA('http://localhost:14265', SEED)
-iota = MyIOTA('http://150.164.7.219:14265', SEED)
-
+iota = MyIOTA('http://localhost:14265', SEED)
 iota.enable_debug()
 
 iota.init_wallet()

@@ -244,8 +244,8 @@ class MyIOTA:
         if savetofile:
             self.update_wallet(input_fund, inputs, change_addr)
 
-    def get_bundles(self, hasht):
-        return self.api.get_bundles(hasht)
+    def get_bundle(self, hasht):
+        return self.api.get_bundle(hasht)
 
     def get_trytes(self, hashl):
         return self.api.get_trytes(hashl)['trytes'][0]
